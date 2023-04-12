@@ -96,6 +96,8 @@ private:
   bool set_scan_mode();
   void publish_loop();
 
+  rmw_qos_profile_t qos_profile = rmw_qos_profile_sensor_data;
+  
   /* parameters */
   std::string channel_type_;
   std::string tcp_ip_;

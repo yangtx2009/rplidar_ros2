@@ -115,9 +115,22 @@ rplidar_node::rplidar_node(const rclcpp::NodeOptions & options)
   }
 
   /* done setting up RPLIDAR stuff, now set up ROS 2 stuff */
+  // RMW_QOS_POLICY_RELIABILITY_RELIABLE
+  qos_profile.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
+  qos_profile.depth = 5;
+  // RMW_QOS_POLICY_DURABILITY_VOLATILE
+  // RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL
+  qos_profile.durability = RMW_QOS_POLICY_DURABILITY_VOLATILE;
+
+  auto qos = rclcpp::QoS(
+    rclcpp::QoSInitialization(
+      qos_profile.history,
+      qos_profile.depth
+    ),
+    qos_profile);
 
   /* create the publisher for "/scan" */
-  m_publisher = this->create_publisher<LaserScan>(topic_name_, 10);
+  m_publisher = this->create_publisher<LaserScan>(topic_name_, qos);  // 10
 
   /* create stop motor service */
   m_stop_motor_service = this->create_service<std_srvs::srv::Empty>(
